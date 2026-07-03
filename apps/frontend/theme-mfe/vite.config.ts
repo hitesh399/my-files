@@ -80,6 +80,7 @@ export default defineConfig({
     port: 5174,
     strictPort: true,
   },
+  base: '/theme',
   preview: {
     port: 4174,
     strictPort: true,

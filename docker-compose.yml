@@ -1,0 +1,20 @@
+services:
+
+  auth-mfe:
+    build:
+      context: ./apps/frontend/auth-mfe
+
+  theme-mfe:
+    build:
+      context: ./apps/frontend/theme-mfe
+
+  shell:
+    build:
+      context: ./apps/frontend/shell
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf

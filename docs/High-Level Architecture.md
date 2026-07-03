@@ -24,6 +24,11 @@ my-files/
 │           ├── app.module.ts
 │           └── main.ts
 └── docs/
+└── infrastructure/
+	 ├── concourse
+	 ├── aws
+	 ├── docker
+	 └── localstack	 
 ```
 
 ## Frontend Micro Frontend Strategy

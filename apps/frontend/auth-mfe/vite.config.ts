@@ -47,7 +47,7 @@ const patchRemoteEntryCssPlaceholders: Plugin = {
 // https://vite.dev/config/
 export default defineConfig(() => {
   const themeRemoteEntry =
-    process.env.VITE_THEME_REMOTE_ENTRY || "http://localhost:4174/assets/remoteEntry.js";
+    process.env.VITE_THEME_REMOTE_ENTRY || "http://localhost:8080/auth/assets/remoteEntry.js";
 
   return {
     plugins: [
@@ -102,6 +102,7 @@ export default defineConfig(() => {
       port: 5173,
       strictPort: true,
     },
+    base: '/auth',
     preview: {
       port: 4173,
       strictPort: true,
