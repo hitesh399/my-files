@@ -9,6 +9,8 @@ import { createRootStore } from './store/rootStore'
 async function bootstrap() {
   const store = await createRootStore()
 
+  console.log('jshjdgsjhd');
+
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <AppProviders store={store}>

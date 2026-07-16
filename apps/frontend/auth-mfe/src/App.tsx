@@ -9,6 +9,7 @@ const RemoteThemeProvider = lazy(() =>
 );
 
 function App() {
+  console.log('Hello')
   return (
     <Suspense
       fallback={<div style={{ padding: "1rem" }}>Loading theme runtime...</div>}

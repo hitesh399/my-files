@@ -20,6 +20,7 @@ interface AppProvidersProps extends PropsWithChildren {
 export function AppProviders({ children, store }: AppProvidersProps) {
   return (
     <Provider store={store}>
+      <p>Hello I am here to listenTesting</p>
       <SessionBootstrap>{children}</SessionBootstrap>
     </Provider>
   );

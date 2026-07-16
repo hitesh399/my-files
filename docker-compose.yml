@@ -1,20 +1,33 @@
 services:
 
-  auth-mfe:
-    build:
-      context: ./apps/frontend/auth-mfe
-
-  theme-mfe:
-    build:
-      context: ./apps/frontend/theme-mfe
-
   shell:
     build:
       context: ./apps/frontend/shell
+      dockerfile: Dockerfile.prod
+    container_name: shell
+
+  auth-mfe:
+    build:
+      context: ./apps/frontend/auth-mfe
+      dockerfile: Dockerfile.prod
+    container_name: auth-mfe
+  theme-mfe:
+    build:
+      context: ./apps/frontend/theme-mfe
+      dockerfile: Dockerfile.prod
+    container_name: theme-mfe
 
   nginx:
     image: nginx:alpine
+    container_name: nginx-gateway
+
     ports:
       - "8080:80"
+
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+
+    depends_on:
+      - shell
+      - auth-mfe
+      - theme-mfe

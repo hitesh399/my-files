@@ -1,0 +1,4 @@
+To create the devbuild
+docker build -f Dockerfile.dev -t shell-dev .
+To run the dev server using docker
+docker run -v $(pwd):/app shell-dev

@@ -94,6 +94,7 @@ function RoutesView() {
 }
 
 function App() {
+  console.log('Hello....')
   return (
     <Suspense fallback={<div style={{ padding: '1rem' }}>Loading auth module...</div>}>
       <AuthGate />

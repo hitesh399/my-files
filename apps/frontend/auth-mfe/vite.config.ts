@@ -9,7 +9,10 @@ const federationPlugin = federation as unknown as (options: {
   filename?: string;
   exposes?: Record<string, string>;
   remotes?: Record<string, string>;
-  shared?: Record<string, { singleton: boolean; requiredVersion: string; version?: string }>;
+  shared?: Record<
+    string,
+    { singleton: boolean; requiredVersion: string; version?: string }
+  >;
 }) => ReturnType<typeof react>;
 
 const patchRemoteEntryCssPlaceholders: Plugin = {
@@ -25,14 +28,18 @@ const patchRemoteEntryCssPlaceholders: Plugin = {
 
     const cssArray = cssFiles.length ? `[${cssFiles.join(",")}]` : "[]";
     const remoteEntryChunk = Object.values(bundle).find(
-      (item) => item.type === "chunk" && item.fileName.endsWith("remoteEntry.js"),
+      (item) =>
+        item.type === "chunk" && item.fileName.endsWith("remoteEntry.js"),
     );
 
     if (!remoteEntryChunk) {
       return;
     }
 
-    const remoteEntryPath = path.resolve(outputOptions.dir, remoteEntryChunk.fileName);
+    const remoteEntryPath = path.resolve(
+      outputOptions.dir,
+      remoteEntryChunk.fileName,
+    );
     const code = await fs.readFile(remoteEntryPath, "utf8");
     const patchedCode = code.replace(/([`'\"])__v__css__[^`'\"]+\1/g, cssArray);
 
@@ -42,12 +49,12 @@ const patchRemoteEntryCssPlaceholders: Plugin = {
   },
 };
 
-
-
 // https://vite.dev/config/
-export default defineConfig(() => {
+export default defineConfig(({ command }) => {
   const themeRemoteEntry =
-    process.env.VITE_THEME_REMOTE_ENTRY || "http://localhost:8080/auth/assets/remoteEntry.js";
+    process.env.VITE_THEME_REMOTE_ENTRY ||
+    "http://localhost:8080/theme/assets/remoteEntry.js";
+  const isDev = command === "serve"; // True during 'npm run dev'
 
   return {
     plugins: [
@@ -102,7 +109,7 @@ export default defineConfig(() => {
       port: 5173,
       strictPort: true,
     },
-    base: '/auth',
+    base: isDev ? "/" : "/auth/",
     preview: {
       port: 4173,
       strictPort: true,
