@@ -36,3 +36,10 @@ jobs:
 
       - name: Build
         run: npm run build
+      
+      - name: Build Docker Image
+        run: |
+          docker build \
+            -f Dockerfile.prod \
+            -t ${{ matrix.app }}:latest .
+
