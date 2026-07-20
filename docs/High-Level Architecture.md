@@ -29,6 +29,9 @@ my-files/
 	 ├── aws
 	 ├── docker
 	 └── localstack	 
+└── docker-compose.yml
+└── nginx
+	 ├── default.conf
 ```
 
 ## Frontend Micro Frontend Strategy
