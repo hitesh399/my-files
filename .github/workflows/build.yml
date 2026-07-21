@@ -55,5 +55,19 @@ jobs:
           file: apps/frontend/${{ matrix.app }}/Dockerfile.prod
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:latest
+  deploy:
+    needs: build
 
+    steps:
+      - name: Deploy
+        uses: appleboy/ssh-action@v1
+
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/deployments
+            docker compose pull
+            docker compose up -d
 
