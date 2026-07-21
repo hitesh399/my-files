@@ -13,10 +13,8 @@ const federationPlugin = federation as unknown as (options: {
 
 // https://vite.dev/config/
 export default defineConfig(() => {
-  const authRemoteEntry =
-    process.env.VITE_AUTH_REMOTE_ENTRY ||
-    "http://localhost:8080/auth/assets/remoteEntry.js";
-  const themeRemoteEntry = "http://localhost:8080/theme/assets/remoteEntry.js";
+  const authRemoteEntry =  "http://16.16.171.240/auth/assets/remoteEntry.js";
+  const themeRemoteEntry = "http://16.16.171.240/theme/assets/remoteEntry.js";
 
   return {
     plugins: [

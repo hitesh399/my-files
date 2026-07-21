@@ -51,9 +51,7 @@ const patchRemoteEntryCssPlaceholders: Plugin = {
 
 // https://vite.dev/config/
 export default defineConfig(({ command }) => {
-  const themeRemoteEntry =
-    process.env.VITE_THEME_REMOTE_ENTRY ||
-    "http://localhost:8080/theme/assets/remoteEntry.js";
+  const themeRemoteEntry = "http://16.16.171.240/theme/assets/remoteEntry.js";
   const isDev = command === "serve"; // True during 'npm run dev'
 
   return {
