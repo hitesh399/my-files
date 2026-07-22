@@ -131,8 +131,9 @@ jobs:
           source: |
             infrastructure/aws/ecs/dev/*
           target: ~/deployments
+          strip_components: 4
           debug: true
-          
+
       - name: Deploy
         uses: appleboy/ssh-action@v1.2.0
         with:
