@@ -16,10 +16,15 @@ async function bootstrap() {
   ];
   const isProduction = process.env.NODE_ENV === 'production';
   const allowedOrigins = process.env.CORS_ORIGINS
-    ? process.env.CORS_ORIGINS.split(',').map((origin) => origin.trim()).filter(Boolean)
+    ? process.env.CORS_ORIGINS.split(',')
+        .map((origin) => origin.trim())
+        .filter(Boolean)
     : defaultAllowedOrigins;
 
-  const corsOptionsDelegate: CorsOptionsDelegate<Request> = (request, callback) => {
+  const corsOptionsDelegate: CorsOptionsDelegate<Request> = (
+    request,
+    callback,
+  ) => {
     const requestOrigin = request.header('Origin');
 
     if (!isProduction) {
@@ -82,10 +87,7 @@ async function bootstrap() {
     },
   });
 
-  await app.listen(process.env.PORT ?? 3000, () => {
-    console.log(`Auth API running on port ${process.env.PORT ?? 3000}`);
-    console.log(`Swagger Documentation: http://localhost:${process.env.PORT ?? 3000}/api/docs`);
-  });
+  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
+  console.log(`Auth API running on port ${process.env.PORT ?? 3000}`);
 }
 bootstrap();
-

@@ -16,6 +16,7 @@ export interface LoginResponse {
 
 import { env } from "@/app/config/env";
 
+
 export async function login(request: LoginRequest): Promise<LoginResponse> {
   const response = await fetch(`${env.apiBaseUrl}/auth/login`, {
     method: "POST",

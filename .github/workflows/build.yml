@@ -1,4 +1,4 @@
-name: Build Frontends
+name: Build and Deploy
 
 on:
   push:
@@ -10,9 +10,10 @@ permissions:
   packages: write
 
 jobs:
-  build:
+  build-frontend:
     name: Build ${{ matrix.app }}
     runs-on: ubuntu-latest
+    environment: dev
 
     strategy:
       matrix:
@@ -29,15 +30,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Create .env
+        run: |
+          cat > .env << EOF
+          VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}
+          VITE_MFE_BASE_URL=${{ vars.VITE_MFE_BASE_URL }}
+          EOF
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: apps/frontend/${{ matrix.app }}/package-lock.json
+          node-version: 24
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build
         run: npm run build
@@ -49,7 +55,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push Docker Image
+      - name: Build and Push Image
         uses: docker/build-push-action@v6
         with:
           context: apps/frontend/${{ matrix.app }}
@@ -57,12 +63,75 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:latest
 
-  deploy:
-    name: Deploy to EC2
-    needs: build
+  build-api:
+    name: Build API
     runs-on: ubuntu-latest
+    environment: dev
+
+    defaults:
+      run:
+        working-directory: apps/api
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create API .env
+        run: |
+          cat > .env << EOF
+          NODE_ENV=production
+          PORT=3000
+          EOF
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Image
+        uses: docker/build-push-action@v6
+        with:
+          context: apps/api
+          file: apps/api/Dockerfile.prod
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/api:latest
+
+  deploy:
+    name: Deploy to EC2
+    needs:
+      - build-frontend
+      - build-api
+
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Copy deployment files to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: |
+            infrastructure/aws/ecs/dev/*
+          target: ~/deployments
+
       - name: Deploy
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -70,6 +139,21 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            mkdir -p ~/deployments
+
             cd ~/deployments
+
+            echo "VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}" > .env
+            echo "VITE_MFE_BASE_URL=${{ vars.VITE_MFE_BASE_URL }}" >> .env
+
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io \
+              -u ${{ github.actor }} \
+              --password-stdin
+
             docker compose pull
+
+            docker compose down
+
             docker compose up -d
+
+            docker image prune -af

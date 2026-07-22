@@ -1,4 +1,4 @@
-import { defineConfig, type Plugin } from "vite";
+import { defineConfig, loadEnv, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { promises as fs } from "node:fs";
@@ -50,8 +50,10 @@ const patchRemoteEntryCssPlaceholders: Plugin = {
 };
 
 // https://vite.dev/config/
-export default defineConfig(({ command }) => {
-  const themeRemoteEntry = "http://16.16.171.240/theme/assets/remoteEntry.js";
+export default defineConfig(({ command, mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
+  const themeRemoteEntry =
+    env.VITE_MFE_BASE_URL + "theme/assets/remoteEntry.js";
   const isDev = command === "serve"; // True during 'npm run dev'
 
   return {

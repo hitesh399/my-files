@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import federation from "@originjs/vite-plugin-federation";
 
@@ -12,9 +12,11 @@ const federationPlugin = federation as unknown as (options: {
 }) => ReturnType<typeof react>;
 
 // https://vite.dev/config/
-export default defineConfig(() => {
-  const authRemoteEntry =  "http://16.16.171.240/auth/assets/remoteEntry.js";
-  const themeRemoteEntry = "http://16.16.171.240/theme/assets/remoteEntry.js";
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
+  const authRemoteEntry = env.VITE_MFE_BASE_URL + "auth/assets/remoteEntry.js";
+  const themeRemoteEntry =
+    env.VITE_MFE_BASE_URL + "theme/assets/remoteEntry.js";
 
   return {
     plugins: [

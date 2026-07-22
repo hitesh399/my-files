@@ -1,0 +1,32 @@
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+
+    ports:
+      - "80:80"
+
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+
+    depends_on:
+      - shell
+      - auth-mfe
+      - theme-mfe
+
+  shell:
+    image: ghcr.io/hitesh399/shell:latest
+    container_name: shell
+
+  auth-mfe:
+    image: ghcr.io/hitesh399/auth-mfe:latest
+    container_name: auth-mfe
+
+  theme-mfe:
+    image: ghcr.io/hitesh399/theme-mfe:latest
+    container_name: theme-mfe
+  api:
+    image: ghcr.io/hitesh399/api:latest
+    container_name: api
+    ports:
+      - "3000:3000"
