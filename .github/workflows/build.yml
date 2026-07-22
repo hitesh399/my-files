@@ -131,7 +131,7 @@ jobs:
           source: |
             infrastructure/aws/ecs/dev/*
           target: ~/deployments
-          strip_components: 4
+          strip_components: 5
           debug: true
 
       - name: Deploy
