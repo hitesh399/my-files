@@ -13,6 +13,7 @@ services:
       - shell
       - auth-mfe
       - theme-mfe
+      - api
 
   shell:
     image: ghcr.io/hitesh399/shell:latest
@@ -25,6 +26,7 @@ services:
   theme-mfe:
     image: ghcr.io/hitesh399/theme-mfe:latest
     container_name: theme-mfe
+
   api:
     image: ghcr.io/hitesh399/api:latest
     container_name: api
